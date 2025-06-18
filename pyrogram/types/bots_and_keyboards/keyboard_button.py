@@ -17,9 +17,12 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
 
-from pyrogram import enums, raw, types
-from ..object import Object
 from typing import Union
+
+from pyrogram import enums, raw, types
+
+from ..object import Object
+
 
 class KeyboardButton(Object):
     """One button of the reply keyboard.
@@ -59,9 +62,11 @@ class KeyboardButton(Object):
         text: str,
         request_contact: bool = None,
         request_location: bool = None,
-        request_chat: Union["types.RequestPeerTypeChat","types.RequestPeerTypeChannel"] = None,
+        request_chat: Union[
+            "types.RequestPeerTypeChat", "types.RequestPeerTypeChannel"
+        ] = None,
         request_user: "types.RequestPeerTypeUser" = None,
-        web_app: "types.WebAppInfo" = None
+        web_app: "types.WebAppInfo" = None,
     ):
         super().__init__()
 
@@ -78,24 +83,13 @@ class KeyboardButton(Object):
             return b.text
 
         if isinstance(b, raw.types.KeyboardButtonRequestPhone):
-            return KeyboardButton(
-                text=b.text,
-                request_contact=True
-            )
+            return KeyboardButton(text=b.text, request_contact=True)
 
         if isinstance(b, raw.types.KeyboardButtonRequestGeoLocation):
-            return KeyboardButton(
-                text=b.text,
-                request_location=True
-            )
+            return KeyboardButton(text=b.text, request_location=True)
 
         if isinstance(b, raw.types.KeyboardButtonSimpleWebView):
-            return KeyboardButton(
-                text=b.text,
-                web_app=types.WebAppInfo(
-                    url=b.url
-                )
-            )
+            return KeyboardButton(text=b.text, web_app=types.WebAppInfo(url=b.url))
 
         if isinstance(b, raw.types.KeyboardButtonRequestPeer):
             if isinstance(b.peer_type, raw.types.RequestPeerTypeBroadcast):
@@ -108,8 +102,8 @@ class KeyboardButton(Object):
                         is_username=b.peer_type.has_username,
                         max=b.max_quantity,
                         user_privileges=user_privileges,
-                        bot_privileges=bot_privileges
-                    )
+                        bot_privileges=bot_privileges,
+                    ),
                 )
             if isinstance(b.peer_type, raw.types.RequestPeerTypeChat):
                 user_privileges = getattr(b.peer_type, "user_admin_rights", None)
@@ -123,8 +117,8 @@ class KeyboardButton(Object):
                         is_forum=b.peer_type.forum,
                         max=b.max_quantity,
                         user_privileges=user_privileges,
-                        bot_privileges=bot_privileges
-                    )
+                        bot_privileges=bot_privileges,
+                    ),
                 )
 
             if isinstance(b.peer_type, raw.types.RequestPeerTypeUser):
@@ -133,9 +127,9 @@ class KeyboardButton(Object):
                     request_user=types.RequestPeerTypeUser(
                         is_bot=b.peer_type.bot,
                         is_premium=b.peer_type.premium,
-                        max=b.max_quantity
-                    )
-            )
+                        max=b.max_quantity,
+                    ),
+                )
 
     def write(self):
         if self.request_contact:
@@ -143,10 +137,11 @@ class KeyboardButton(Object):
         elif self.request_location:
             return raw.types.KeyboardButtonRequestGeoLocation(text=self.text)
         elif self.request_chat:
-            user_privileges = self.request_peer.user_privileges
-            bot_privileges = self.request_peer.bot_privileges
+            user_privileges = self.request_user and self.request_user.user_privileges
+            bot_privileges = self.request_user and self.request_user.bot_privileges
 
-            user_admin_rights = raw.types.ChatAdminRights(
+            user_admin_rights = (
+                raw.types.ChatAdminRights(
                     change_info=user_privileges.can_change_info,
                     post_messages=user_privileges.can_post_messages,
                     post_stories=user_privileges.can_post_stories,
@@ -160,10 +155,14 @@ class KeyboardButton(Object):
                     add_admins=user_privileges.can_promote_members,
                     anonymous=user_privileges.is_anonymous,
                     manage_call=user_privileges.can_manage_video_chats,
-                    other=user_privileges.can_manage_chat
-            ) if user_privileges else None
+                    other=user_privileges.can_manage_chat,
+                )
+                if user_privileges
+                else None
+            )
 
-            bot_admin_rights = raw.types.ChatAdminRights(
+            bot_admin_rights = (
+                raw.types.ChatAdminRights(
                     change_info=bot_privileges.can_change_info,
                     post_messages=bot_privileges.can_post_messages,
                     post_stories=bot_privileges.can_post_stories,
@@ -177,8 +176,11 @@ class KeyboardButton(Object):
                     add_admins=bot_privileges.can_promote_members,
                     anonymous=bot_privileges.is_anonymous,
                     manage_call=bot_privileges.can_manage_video_chats,
-                    other=bot_privileges.can_manage_chat
-            ) if bot_privileges else None
+                    other=bot_privileges.can_manage_chat,
+                )
+                if bot_privileges
+                else None
+            )
 
             if isinstance(self.request_chat, types.RequestPeerTypeChannel):
                 return raw.types.InputKeyboardButtonRequestPeer(
@@ -188,12 +190,12 @@ class KeyboardButton(Object):
                         creator=self.request_chat.is_creator,
                         has_username=self.request_chat.is_username,
                         user_admin_rights=user_admin_rights,
-                        bot_admin_rights=bot_admin_rights
+                        bot_admin_rights=bot_admin_rights,
                     ),
                     max_quantity=self.request_chat.max,
                     name_requested=self.request_chat.is_name_requested,
                     username_requested=self.request_chat.is_username_requested,
-                    photo_requested=self.request_chat.is_photo_requested
+                    photo_requested=self.request_chat.is_photo_requested,
                 )
             return raw.types.InputKeyboardButtonRequestPeer(
                 text=self.text,
@@ -204,27 +206,28 @@ class KeyboardButton(Object):
                     has_username=self.request_chat.is_username,
                     forum=self.request_chat.is_forum,
                     user_admin_rights=user_admin_rights,
-                    bot_admin_rights=bot_admin_rights
+                    bot_admin_rights=bot_admin_rights,
                 ),
                 max_quantity=self.request_chat.max,
                 name_requested=self.request_chat.is_name_requested,
                 username_requested=self.request_chat.is_username_requested,
-                photo_requested=self.request_chat.is_photo_requested
+                photo_requested=self.request_chat.is_photo_requested,
             )
         elif self.request_user:
             return raw.types.InputKeyboardButtonRequestPeer(
                 text=self.text,
                 button_id=self.request_user.button_id,
                 peer_type=raw.types.RequestPeerTypeUser(
-                    bot=self.request_user.is_bot,
-                    premium=self.request_user.is_premium
+                    bot=self.request_user.is_bot, premium=self.request_user.is_premium
                 ),
                 max_quantity=self.request_user.max,
                 name_requested=self.request_user.is_name_requested,
                 username_requested=self.request_user.is_username_requested,
-                photo_requested=self.request_user.is_photo_requested
+                photo_requested=self.request_user.is_photo_requested,
             )
         elif self.web_app:
-            return raw.types.KeyboardButtonSimpleWebView(text=self.text, url=self.web_app.url)
+            return raw.types.KeyboardButtonSimpleWebView(
+                text=self.text, url=self.web_app.url
+            )
         else:
             return raw.types.KeyboardButton(text=self.text)
