@@ -22,26 +22,14 @@ from enum import auto
 from .auto_name import AutoName
 
 
-class ChatType(AutoName):
-    """Chat type enumeration used in :obj:`~pyrogram.types.Chat`."""
+class GiftForResaleOrder(AutoName):
+    """Describes order in which upgraded gifts for resale will be sorted. Used in :meth:`~pyrogram.Client.search_gifts_for_resale`."""
 
-    PRIVATE = auto()
-    "Chat is a private chat with a user"
+    PRICE = auto()
+    "The gifts will be sorted by their price from the lowest to the highest"
 
-    BOT = auto()
-    "Chat is a private chat with a bot"
+    CHANGE_DATE = auto()
+    "The gifts will be sorted by the last date when their price was changed from the newest to the oldest"
 
-    GROUP = auto()
-    "Chat is a basic group"
-
-    SUPERGROUP = auto()
-    "Chat is a supergroup"
-
-    CHANNEL = auto()
-    "Chat is a channel"
-
-    FORUM = auto()
-    "Chat is a forum"
-
-    MONOFORUM = auto()
-    "Chat is a monoforum"
+    NUMBER = auto()
+    "The gifts will be sorted by their number from the smallest to the largest"

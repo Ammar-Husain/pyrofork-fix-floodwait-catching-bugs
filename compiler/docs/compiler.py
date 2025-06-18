@@ -365,11 +365,15 @@ def pyrogram_api():
             get_chat_gifts
             hide_gift
             refund_star_payment
+            search_gifts_for_resale
             send_invoice
             send_paid_media
             send_paid_reaction
             send_payment_form
             send_gift
+            send_resold_gift
+            set_gift_resale_price
+            set_pinned_gifts
             show_gift
             transfer_gift
             upgrade_gift
@@ -411,6 +415,9 @@ def pyrogram_api():
             answer_shipping_query
             delete_business_messages
             get_business_connection
+            get_business_account_gifts
+            get_business_account_star_balance
+            transfer_business_account_stars
         """,
         authorization="""
         Authorization
@@ -484,6 +491,7 @@ def pyrogram_api():
             BusinessWeeklyOpen
             BusinessWorkingHours
             User
+            Username
             Chat
             ChatPreview
             ChatPhoto
@@ -604,6 +612,7 @@ def pyrogram_api():
             Invoice
             LabeledPrice
             PaidMedia
+            PaidMessagePriceChanged
             PaymentForm
             PaymentInfo
             PaymentRefunded
@@ -713,6 +722,7 @@ def pyrogram_api():
         InputMessageContent
             InputMessageContent
             InputReplyToMessage
+            InputReplyToMonoforum
             InputReplyToStory
             InputTextMessageContent
             InputLocationMessageContent
